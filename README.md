@@ -2,6 +2,8 @@
 
 Full-stack web application for booking community health services. Built for ICT 930 Assessment 3.
 
+## Live link https://chs-booking-system.vercel.app
+
 ## Stack
 - **Frontend:** React (Vite) + Tailwind CSS + Zustand + React Router + Axios
 - **Backend:** Node.js + Express + PostgreSQL (Neon) + JWT
@@ -12,11 +14,19 @@ Full-stack web application for booking community health services. Built for ICT 
 - **provider** – manage their own services, view assigned bookings, update status
 - **admin** – manage all users, services, and bookings
 
+## Default seed accounts | Use this to test
+| Role     | Email                  | Password     |
+|----------|------------------------|--------------|
+| Admin    | admin@chs.local        | Admin@123    |
+| Provider | provider@chs.local     | Provider@123 |
+| Patient  | patient@chs.local      | Patient@123  |
+
+
 ## Quick start
 
 ### 1. Database (Neon)
-1. Create a free Postgres database at https://neon.tech
-2. Copy the connection string (it looks like `postgresql://user:pass@ep-xxx.neon.tech/dbname?sslmode=require`)
+1. Database setup to be hosted at https://neon.tech
+2. Copy the connection string
 3. Run the schema:
    ```bash
    psql "<your-neon-connection-string>" -f backend/db/schema.sql
@@ -41,12 +51,7 @@ npm run dev
 ```
 Frontend runs on `http://localhost:5173`.
 
-## Default seed accounts
-| Role     | Email                  | Password     |
-|----------|------------------------|--------------|
-| Admin    | admin@chs.local        | Admin@123    |
-| Provider | provider@chs.local     | Provider@123 |
-| Patient  | patient@chs.local      | Patient@123  |
+
 
 ## API summary
 - `POST /api/auth/register` – register a patient
