@@ -56,6 +56,42 @@ Frontend runs on `http://localhost:5173`.
 - `GET/POST/PATCH/DELETE /api/bookings` – bookings CRUD
 - `GET/PUT/DELETE /api/users` – user admin
 
+## Deploying to Vercel
+
+Deploy as **two separate Vercel projects from this same repo**.
+
+### A. Backend project
+1. **Import the repo** on Vercel → set **Root Directory** to `backend`.
+2. Framework preset: **Other** (Vercel auto-detects via `vercel.json`).
+3. Add **Environment Variables** (Production + Preview):
+   | Key | Value |
+   |---|---|
+   | `DATABASE_URL` | your Neon connection string |
+   | `JWT_SECRET` | long random string |
+   | `JWT_EXPIRES_IN` | `7d` |
+   | `CORS_ORIGIN` | frontend URL, e.g. `https://chs-frontend.vercel.app` (comma-separate multiple) |
+   | `NODE_ENV` | `production` |
+4. Deploy. The Express app is served from `backend/api/index.js` as a serverless function; `vercel.json` rewrites every path to it.
+5. Note the deployed URL, e.g. `https://chs-backend.vercel.app`.
+
+### B. Frontend project
+1. Import the same repo again → set **Root Directory** to `frontend`.
+2. Framework preset: **Vite** (auto-detected).
+3. Add **Environment Variable**:
+   | Key | Value |
+   |---|---|
+   | `VITE_API_URL` | `https://chs-backend.vercel.app/api` |
+4. Deploy.
+
+### C. Update backend CORS
+Once you know the frontend URL, set `CORS_ORIGIN` on the backend project to that URL and redeploy. Cookies use `SameSite=None; Secure` automatically when `NODE_ENV=production`, so the cross-site cookie flow works.
+
+### D. Initialise the database
+Run `backend/db/schema.sql` against your Neon database, then seed if you want default accounts:
+```bash
+DATABASE_URL="..." node backend/src/seed.js
+```
+
 ## Project structure
 ```
 backend/
