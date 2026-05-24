@@ -34,7 +34,7 @@ export default function Navbar() {
           <div className="w-7 h-7 bg-brand-600 rounded-md flex items-center justify-center">
             <LuHeartPulse className="text-white text-sm" />
           </div>
-          chs-booking
+          CHS-Booking
         </NavLink>
 
         {/* Center nav */}
