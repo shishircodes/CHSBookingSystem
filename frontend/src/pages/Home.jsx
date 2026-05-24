@@ -205,7 +205,7 @@ export default function Home() {
 
       <footer className="border-t border-slate-100 py-6">
         <p className="text-center text-sm text-slate-400">
-          chs-booking. Built for ICT 930 Advanced Web Application Development.
+         &copy; CHS-Booking. Built by Shishir, Bijay and Prashant.
         </p>
       </footer>
     </div>
