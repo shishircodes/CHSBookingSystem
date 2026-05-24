@@ -28,8 +28,8 @@ export default function Register() {
   const update = (k) => (e) => setForm({ ...form, [k]: e.target.value });
 
   return (
-    <div className="max-w-md mx-auto">
-      <div className="card">
+    <div className="max-w-md mx-auto py-8">
+      <div className="card border-slate-200 shadow-sm">
         <h1 className="text-2xl font-semibold">Create an account</h1>
         <p className="text-slate-600 text-sm mt-1">Register as a patient to book services.</p>
 

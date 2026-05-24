@@ -1,18 +1,15 @@
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
+import { useLoaderData, useRevalidator } from 'react-router-dom';
+import { LuUserPlus, LuTrash2 } from 'react-icons/lu';
 import api from '../api/client.js';
 
 const emptyForm = { name: '', email: '', password: '', phone: '', role: 'patient' };
 
 export default function AdminUsers() {
-  const [users, setUsers] = useState([]);
-  const [form, setForm] = useState(emptyForm);
+  const { users } = useLoaderData();
+  const { revalidate } = useRevalidator();
+  const [form, setForm]   = useState(emptyForm);
   const [error, setError] = useState('');
-
-  const load = async () => {
-    const { data } = await api.get('/users');
-    setUsers(data);
-  };
-  useEffect(() => { load(); }, []);
 
   const createUser = async (e) => {
     e.preventDefault();
@@ -20,7 +17,7 @@ export default function AdminUsers() {
     try {
       await api.post('/users', form);
       setForm(emptyForm);
-      load();
+      revalidate();
     } catch (err) {
       const issues = err.response?.data?.issues;
       setError(issues ? issues.map((i) => `${i.path}: ${i.message}`).join(', ') : err.response?.data?.error || 'Create failed');
@@ -29,13 +26,13 @@ export default function AdminUsers() {
 
   const updateRole = async (id, role) => {
     await api.put(`/users/${id}`, { role });
-    load();
+    revalidate();
   };
 
   const remove = async (id) => {
     if (!confirm('Delete this user?')) return;
     await api.delete(`/users/${id}`);
-    load();
+    revalidate();
   };
 
   return (
@@ -60,7 +57,7 @@ export default function AdminUsers() {
                 <option value="provider">provider</option>
                 <option value="admin">admin</option>
               </select></div>
-            <button className="btn-primary w-full">Create user</button>
+            <button className="btn-primary w-full gap-1.5"><LuUserPlus /> Create user</button>
           </form>
         </div>
       </section>
@@ -92,7 +89,9 @@ export default function AdminUsers() {
                   </td>
                   <td className="px-4 py-3">{u.phone || '-'}</td>
                   <td className="px-4 py-3">
-                    <button onClick={() => remove(u.id)} className="btn-danger text-xs py-1 px-2">Delete</button>
+                    <button onClick={() => remove(u.id)} className="btn-danger text-xs py-1 px-2 gap-1">
+                      <LuTrash2 className="text-sm" /> Delete
+                    </button>
                   </td>
                 </tr>
               ))}

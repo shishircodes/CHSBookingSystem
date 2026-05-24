@@ -28,8 +28,8 @@ export default function Login() {
   };
 
   return (
-    <div className="max-w-md mx-auto">
-      <div className="card">
+    <div className="max-w-md mx-auto py-8">
+      <div className="card border-slate-200 shadow-sm">
         <h1 className="text-2xl font-semibold">Sign in</h1>
         <p className="text-slate-600 text-sm mt-1">Welcome back.</p>
 

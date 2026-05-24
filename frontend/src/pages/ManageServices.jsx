@@ -1,4 +1,6 @@
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
+import { useLoaderData, useRevalidator } from 'react-router-dom';
+import { LuPencil, LuTrash2, LuPlus, LuX } from 'react-icons/lu';
 import api from '../api/client.js';
 import { useAuth } from '../store/authStore.js';
 
@@ -6,25 +8,11 @@ const empty = { name: '', description: '', category: '', duration_min: 30, price
 
 export default function ManageServices() {
   const { user } = useAuth();
-  const [services, setServices] = useState([]);
-  const [providers, setProviders] = useState([]);
-  const [form, setForm] = useState(empty);
+  const { services, providers } = useLoaderData();
+  const { revalidate } = useRevalidator();
+  const [form, setForm]         = useState(empty);
   const [editingId, setEditingId] = useState(null);
-  const [error, setError] = useState('');
-
-  const load = async () => {
-    const { data } = await api.get('/services');
-    if (user.role === 'provider') {
-      setServices(data.filter((s) => s.provider_id === user.id));
-    } else {
-      setServices(data);
-    }
-    if (user.role === 'admin') {
-      const u = await api.get('/users?role=provider');
-      setProviders(u.data);
-    }
-  };
-  useEffect(() => { load(); }, []);
+  const [error, setError]       = useState('');
 
   const onSubmit = async (e) => {
     e.preventDefault();
@@ -39,7 +27,7 @@ export default function ManageServices() {
       if (editingId) await api.put(`/services/${editingId}`, payload);
       else           await api.post('/services', payload);
       setForm(empty); setEditingId(null);
-      load();
+      revalidate();
     } catch (err) {
       const issues = err.response?.data?.issues;
       setError(issues ? issues.map((i) => `${i.path}: ${i.message}`).join(', ') : err.response?.data?.error || 'Save failed');
@@ -58,7 +46,7 @@ export default function ManageServices() {
   const remove = async (id) => {
     if (!confirm('Delete this service?')) return;
     await api.delete(`/services/${id}`);
-    load();
+    revalidate();
   };
 
   return (
@@ -94,10 +82,12 @@ export default function ManageServices() {
               Active
             </label>
             <div className="flex gap-2">
-              <button className="btn-primary flex-1">{editingId ? 'Update' : 'Create'}</button>
+              <button className="btn-primary flex-1 gap-1.5">
+                {editingId ? <><LuPencil /> Update</> : <><LuPlus /> Create</>}
+              </button>
               {editingId && (
-                <button type="button" className="btn-ghost" onClick={() => { setEditingId(null); setForm(empty); }}>
-                  Cancel
+                <button type="button" className="btn-ghost gap-1" onClick={() => { setEditingId(null); setForm(empty); }}>
+                  <LuX /> Cancel
                 </button>
               )}
             </div>
@@ -132,13 +122,17 @@ export default function ManageServices() {
                   <td className="px-4 py-3">{s.duration_min} min</td>
                   <td className="px-4 py-3">${Number(s.price).toFixed(2)}</td>
                   <td className="px-4 py-3">
-                    <span className={`badge ${s.is_active ? 'bg-emerald-100 text-emerald-800' : 'bg-slate-200'}`}>
+                    <span className={`badge ${s.is_active ? 'bg-brand-50 text-brand-700' : 'bg-slate-100 text-slate-500'}`}>
                       {s.is_active ? 'yes' : 'no'}
                     </span>
                   </td>
                   <td className="px-4 py-3 space-x-1">
-                    <button onClick={() => startEdit(s)} className="btn-ghost text-xs py-1 px-2">Edit</button>
-                    <button onClick={() => remove(s.id)} className="btn-danger text-xs py-1 px-2">Delete</button>
+                    <button onClick={() => startEdit(s)} className="btn-ghost text-xs py-1 px-2 gap-1">
+                      <LuPencil className="text-sm" /> Edit
+                    </button>
+                    <button onClick={() => remove(s.id)} className="btn-danger text-xs py-1 px-2 gap-1">
+                      <LuTrash2 className="text-sm" /> Delete
+                    </button>
                   </td>
                 </tr>
               ))}

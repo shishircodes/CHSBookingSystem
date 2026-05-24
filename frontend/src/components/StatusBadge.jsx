@@ -1,9 +1,18 @@
-const COLORS = {
-  pending:   'bg-amber-100 text-amber-800',
-  confirmed: 'bg-blue-100 text-blue-800',
-  completed: 'bg-emerald-100 text-emerald-800',
-  cancelled: 'bg-slate-200 text-slate-700',
+import { LuClock, LuCircleCheck, LuCheckCheck, LuCircleX } from 'react-icons/lu';
+
+const CONFIG = {
+  pending:   { cls: 'bg-slate-100 text-slate-600',   Icon: LuClock        },
+  confirmed: { cls: 'bg-brand-50  text-brand-700',   Icon: LuCircleCheck  },
+  completed: { cls: 'bg-brand-100 text-brand-800',   Icon: LuCheckCheck   },
+  cancelled: { cls: 'bg-slate-100 text-slate-400',   Icon: LuCircleX      },
 };
+
 export default function StatusBadge({ status }) {
-  return <span className={`badge ${COLORS[status] || 'bg-slate-100'}`}>{status}</span>;
+  const { cls, Icon } = CONFIG[status] || { cls: 'bg-slate-100 text-slate-600', Icon: LuClock };
+  return (
+    <span className={`badge ${cls}`}>
+      <Icon className="text-xs" />
+      {status}
+    </span>
+  );
 }
